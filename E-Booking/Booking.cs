@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 namespace E_Booking
 {
-    class Booking
+	[Serializable]
+	class Booking
     {
 		public int IDBooking;
 		public Flight Flight { get; set; }

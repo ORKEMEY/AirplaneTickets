@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace E_Booking
 {
-    class Flight
+	[Serializable]
+	class Flight
     {
-		
 		private string _Origin;
 		private string _Destination;
 		private DateTime _Departure;
@@ -142,6 +142,8 @@ namespace E_Booking
 
 		public void Registration()
 		{
+			var Time = (Departure, Arrival);
+
 			Console.WriteLine(" < Registration of new flight > ");
 
 			do
@@ -173,35 +175,32 @@ namespace E_Booking
 
 			} while (_NumberOfSeats == -1);
 
-			DateTime departure, arrival;
-
-			SetTime(out departure, out arrival);
-
-			Departure = departure;
-			Arrival = arrival;
+			SetTime(out Time);
+			Departure = Time.Departure;
+			Arrival = Time.Arrival;
+			Console.WriteLine();
 		}
 
-		public static void SetTime( out DateTime departure, out DateTime arrival)
+		public static void SetTime(out (DateTime departure, DateTime arrival) Time)
 		{
-			departure = arrival = DateTime.MinValue;
-
+			
 			do
 			{
 				do
 				{
 					Console.Write(" < Enter departure time of flight like \"dd.mm.yyyy hh:mm\" > \n>");
-					departure = EnterDateTime();
+					Time.departure = EnterDateTime();
 
-				} while (departure == DateTime.MinValue);
+				} while (Time.departure == DateTime.MinValue);
 
 				do
 				{
 					Console.Write(" < Enter arrival time of flight like \"dd.mm.yyyy hh:mm\" > \n>");
-					arrival = EnterDateTime();
+					Time.arrival = EnterDateTime();
 
-				} while (arrival == DateTime.MinValue);
+				} while (Time.arrival == DateTime.MinValue);
 
-			} while (!CheckTime(departure, arrival));
+			} while (!CheckTime(Time.departure, Time.arrival));
 
 		}
 
@@ -226,13 +225,13 @@ namespace E_Booking
 			{
 				Time = DateTime.Parse(Console.ReadLine());
 			}
-			catch (ArgumentNullException e)
+			catch (ArgumentNullException)
 			{
-				Program.WriteColorLine( " < " +  e.Message + " > ", ConsoleColor.Red);
+				Program.WriteColorLine(" < You need to enter date like \"dd.mm.yyyy hh:mm\" > ", ConsoleColor.Red);
 			}
-			catch (FormatException e)
+			catch (FormatException)
 			{
-				Program.WriteColorLine(" < " + e.Message + " > ", ConsoleColor.Red);
+				Program.WriteColorLine(" < Wrong format of time, you need to enter date like \"dd.mm.yyyy hh:mm\"  > ", ConsoleColor.Red);
 			}
 			return Time;
 		}
@@ -253,6 +252,5 @@ namespace E_Booking
 				"____________________________________________________");
 		}
 
-
-    }
+	}
 }

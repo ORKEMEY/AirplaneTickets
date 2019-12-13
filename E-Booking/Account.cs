@@ -68,5 +68,26 @@ namespace E_Booking
 			return password;
 		}
 
+		public bool EnterPassword()
+		{
+			int NumberOfAttempts = 0;
+
+			do
+			{
+				if (NumberOfAttempts == 2) Program.WriteColorLine(" < Last attempt > ", ConsoleColor.Magenta);
+				Console.Write(" < Enter your password > \n>");
+				
+				if (VerifyPassword(ReadPassword())) return true;
+				Program.WriteColorLine(" < Wrong password > \n", ConsoleColor.Red);
+				NumberOfAttempts++;
+
+			} while (NumberOfAttempts < 3);
+
+			return false;
+
+		}
+
+
+
     }
 }

@@ -87,8 +87,6 @@ namespace E_Booking
 		}
 		public FlightsBase BookedFlights;
 
-
-
 		public Customer()
 		{
 			_Name = _Surname = Login = null;

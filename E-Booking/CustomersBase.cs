@@ -5,7 +5,6 @@ namespace E_Booking
 {
     class CustomersBase : Serializer
     {
-
 		public List<Customer> Base = null;
 
 		private static CustomersBase Source;
@@ -21,11 +20,14 @@ namespace E_Booking
 			Base = new List<Customer>(1);
 		}
 
-		public void AddToBase(Customer CurCust)
+		public Customer RegistrateCustomer()
 		{
+			Customer CurCust = new Customer(); 
 			CurCust.Registration();
 			Base.Add(CurCust);
 			CurCust.IDCustomer = Base.IndexOf(CurCust);
+			return CurCust;
+
 		}
 
 		public void DelFromBase(Customer CurCust)

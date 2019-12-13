@@ -4,6 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace E_Booking
 {
+	[Serializable]
 	class Serializer
 	{
 
@@ -18,9 +19,9 @@ namespace E_Booking
 				{
 					Formatter.Serialize(Stream, Object);
 				}
-				catch
+				catch(ArgumentNullException)
 				{
-					Console.WriteLine($" < Serializable file {Path} is empty or defective > ");
+					Program.WriteColorLine($" < Serializable file {Path} is empty or defective > ", ConsoleColor.Red);
 				}
 			}
 		}
@@ -37,7 +38,7 @@ namespace E_Booking
 				}
 				catch
 				{
-					Console.WriteLine($" < Serializable file {Path} is empty or defective > ");
+					Program.WriteColorLine($" < Serializable file {Path} is empty or defective > ", ConsoleColor.Red);
 					return default(T);
 				}
 			}
