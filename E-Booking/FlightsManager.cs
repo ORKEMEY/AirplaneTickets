@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 namespace E_Booking
 {
 	class FlightsManager : Account
 	{
-		public CustomersBase CustomersBase { get; set; }
-		public FlightsBase FlightsBase { get; set; }
+		public CustomersBase Customers { get; set; }
+		public FlightsBase Flights { get; set; }
 
 		private static FlightsManager Source;
 		public static FlightsManager GetSource()
@@ -20,29 +19,24 @@ namespace E_Booking
 		private FlightsManager()
 		{
 			Password = "12345";
-			CustomersBase = CustomersBase.GetSource();
-
-			FlightsBase = Deserialize<FlightsBase>("FlightsBase.dat");
-			if(FlightsBase == default(FlightsBase)) FlightsBase = new FlightsBase();
+			Customers = CustomersBase.GetSource();
+			Flights = Deserialize<FlightsBase>("FlightsBase.dat");
+			if(Flights == default(FlightsBase)) Flights = new FlightsBase();
 		}
 
-		public static void OutputManagersMenu()
+		private static void OutputManagersMenu()
 		{
 			Console.WriteLine(" < Menu > ");
 
 			Console.Write(" < Enter \""); Program.WriteColor("o", ConsoleColor.DarkCyan); Console.WriteLine("\" to output menu > ");
-			Console.Write(" < Enter \""); Program.WriteColor("r", ConsoleColor.DarkCyan); Console.WriteLine("\" to register new flight > ");
-			Console.Write(" < Enter \""); Program.WriteColor("a", ConsoleColor.DarkCyan); Console.WriteLine("\" to output all flights > ");
-			Console.Write(" < Enter \""); Program.WriteColor("i", ConsoleColor.DarkCyan); Console.WriteLine("\" to output current flights > ");
-			Console.Write(" < Enter \""); Program.WriteColor("f", ConsoleColor.DarkCyan); Console.WriteLine("\" to find flight > ");
+			Console.Write(" < Enter \""); Program.WriteColor("с", ConsoleColor.DarkCyan); Console.WriteLine("\" to switch to customers menu > ");
+			Console.Write(" < Enter \""); Program.WriteColor("f", ConsoleColor.DarkCyan); Console.WriteLine("\" to switch to flights menu > ");
 			Console.Write(" < Enter \""); Program.WriteColor("q", ConsoleColor.DarkCyan); Console.WriteLine("\" to quit > ");
 			Console.WriteLine();
 		}
 
 		public void Menu()
 		{
-			//Customer CurCust = null;
-			Flight CurFlight = null;
 			char mode = ' ';
 
 			Console.Clear();
@@ -60,34 +54,15 @@ namespace E_Booking
 						OutputManagersMenu();
 						break;
 
-					case 'a':
-					case 'A':
-							FlightsBase.OutputFlights();
-						break;
-
-					case 'i':
-					case 'I':
-						if (CurFlight != null)
-						{
-							Flight.GetHeadOfTable();
-							CurFlight.GetInfo();
-						}
-						else Program.WriteColorLine(" < No current flight specified > ", ConsoleColor.Magenta);
-						break;
-
-					case 'r':
-					case 'R':
-						CurFlight = FlightsBase.RegistrateFlight();
+					case 'c':
+					case 'C':
+						CustomerMenu();
+						OutputManagersMenu();
 						break;
 
 					case 'f':
 					case 'F':
-
-						int Ind = FlightMenu();
-						if (Ind != -1)
-						{
-							CurFlight = FlightsBase.Base[Ind];
-						}
+						FlightMenu();
 						OutputManagersMenu();
 						break;
 
@@ -105,47 +80,161 @@ namespace E_Booking
 
 		}
 
-		public static void OutputFlightMenu()
+		private static void OutputFlightMenu()
 		{
 			Console.WriteLine(" < Menu > ");
-			Console.Write(" < Enter \""); Program.WriteColor("q", ConsoleColor.DarkCyan); Console.WriteLine("\" to quit > ");
+			Console.Write(" < Enter \""); Program.WriteColor("o", ConsoleColor.DarkCyan); Console.WriteLine("\" to output menu > ");
+			Console.Write(" < Enter \""); Program.WriteColor("r", ConsoleColor.DarkCyan); Console.WriteLine("\" to register new flight > ");
+			Program.WriteColorLine("-------------------------------------------", ConsoleColor.Green);
+			Console.Write(" < Enter \""); Program.WriteColor("a", ConsoleColor.DarkCyan); Console.WriteLine("\" to output all flights > ");
+			Console.Write(" < Enter \""); Program.WriteColor("i", ConsoleColor.DarkCyan); Console.WriteLine("\" to output current flight > ");
+			Program.WriteColorLine("-------------------------------------------", ConsoleColor.Green);
 			Console.Write(" < Enter \""); Program.WriteColor("p", ConsoleColor.DarkCyan); Console.WriteLine("\" to find flight by points > ");
+			Console.Write(" < Enter \""); Program.WriteColor("k", ConsoleColor.DarkCyan); Console.WriteLine("\" to find flight by date of arrival > ");
+			Console.Write(" < Enter \""); Program.WriteColor("l", ConsoleColor.DarkCyan); Console.WriteLine("\" to find flight by date of departure > ");
+			Program.WriteColorLine("-------------------------------------------", ConsoleColor.Green);
+			Console.Write(" < Enter \""); Program.WriteColor("d", ConsoleColor.DarkCyan); Console.WriteLine("\" to delete current flight > ");
+			Console.Write(" < Enter \""); Program.WriteColor("q", ConsoleColor.DarkCyan); Console.WriteLine("\" to quit > ");
 			Console.WriteLine();
 		}
 
-		public int FlightMenu()
+		public void FlightMenu( )
 		{
-			int CurFlightInd = -1;
+			Flight CurFlight = null;
+			char mode = ' ';
 
 			Console.Clear();
 			OutputFlightMenu();
-
-			switch (Program.EnterMode())
+			
+			do
 			{
+				mode = Program.EnterMode();
+				switch (mode)
+				{
 
-				case 'p':
-				case 'P':
+					case 'o':
+					case 'O':
+						OutputFlightMenu();
+						break;
 
-					CurFlightInd = FlightsBase.FindByPoints();
-					break;
+					case 'p':
+					case 'P':
 
-				case 'q':
-				case 'Q':
-					
-					break;
+						CurFlight = Flights.FindByPoints();
+						Program.WriteColorLine(" < Current flight was updated > \n", ConsoleColor.Green);
+						OutputFlightMenu();
+						break;
 
-				default:
-					Program.WriteColorLine(" < Wrong mode > ", ConsoleColor.Red);	
-					break;
-			}
+					case 'a':
+					case 'A':
+						Flights.OutputFlights();
+						break;
 
-			Console.Write(" < Enter any key > \n>");
-			Console.ReadKey();
+					case 'd':
+					case 'D':
+						Flights.DelCurrentFlight(CurFlight);
+						break;
+
+					case 'i':
+					case 'I':
+						FlightsBase.OutputCurrentFlight(CurFlight);
+						break;
+
+					case 'r':
+					case 'R':
+						CurFlight = Flights.RegistrateFlight();
+						Program.WriteColorLine(" < Current flight was updated > \n", ConsoleColor.Green);
+						break;
+					case 'k':
+					case 'K':
+						CurFlight = Flights.FindByDate(FlightsTime.arrival);
+						Program.WriteColorLine(" < Current flight was updated > \n", ConsoleColor.Green);
+						break;
+
+					case 'l':
+					case 'L':
+						CurFlight = Flights.FindByDate(FlightsTime.departure);
+						Program.WriteColorLine(" < Current flight was updated > \n", ConsoleColor.Green);
+						break;
+
+					case 'q':
+					case 'Q':
+						break;
+
+					default:
+						Program.WriteColorLine(" < Wrong mode > ", ConsoleColor.Red);
+						break;
+				}
+
+			} while (mode != 'q' && mode != 'Q');
+
 			Console.Clear();
-			return CurFlightInd;
 		}
 
+		private static void OutputCustomerMenu()
+		{
+			Console.WriteLine(" < Menu > ");
+			Console.Write(" < Enter \""); Program.WriteColor("o", ConsoleColor.DarkCyan); Console.WriteLine("\" to output menu > ");
+			Console.Write(" < Enter \""); Program.WriteColor("a", ConsoleColor.DarkCyan); Console.WriteLine("\" to output all customers > ");
+			Console.Write(" < Enter \""); Program.WriteColor("i", ConsoleColor.DarkCyan); Console.WriteLine("\" to output current account > ");
+			Program.WriteColorLine("-------------------------------------------", ConsoleColor.Green);
+			Console.Write(" < Enter \""); Program.WriteColor("f", ConsoleColor.DarkCyan); Console.WriteLine("\" to find customer by login > ");
+			Console.Write(" < Enter \""); Program.WriteColor("d", ConsoleColor.DarkCyan); Console.WriteLine("\" to delete current flight > ");
+			Console.Write(" < Enter \""); Program.WriteColor("q", ConsoleColor.DarkCyan); Console.WriteLine("\" to quit > ");
+			Console.WriteLine();
+		}
 
+		public void CustomerMenu()
+		{
+			Customer CurCust = null;
+			char mode = ' ';
 
+			Console.Clear();
+			OutputCustomerMenu();
+
+			do
+			{
+				mode = Program.EnterMode();
+				switch (mode)
+				{
+					case 'o':
+					case 'O':
+						OutputCustomerMenu();
+						break;
+
+					case 'a':
+					case 'A':
+						Customers.OutputCustomers();
+						break;
+
+					case 'f':
+					case 'F':
+						CurCust = Customers.FindByLogin();
+						Program.WriteColorLine(" < Current account was updated > \n", ConsoleColor.Green);
+						break;
+
+					case 'd':
+					case 'D':
+						Customers.DelCurrentCustomer(CurCust);
+						break;
+
+					case 'i':
+					case 'I':
+						CustomersBase.OutputCurrentCustomer(CurCust);
+						break;
+
+					case 'q':
+					case 'Q':
+						break;
+
+					default:
+						Program.WriteColorLine(" < Wrong mode > ", ConsoleColor.Red);
+						break;
+				}
+
+			} while (mode != 'q' && mode != 'Q');
+
+			Console.Clear();
+		}
 	}
 }

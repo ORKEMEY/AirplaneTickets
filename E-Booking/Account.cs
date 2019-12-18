@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace E_Booking
 {
-    class Account : Serializer
+	[Serializable]
+	class Account : Serializer
 	{
 		protected string Password;
 
@@ -86,8 +87,6 @@ namespace E_Booking
 			return false;
 
 		}
-
-
 
     }
 }

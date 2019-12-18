@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Account.cs" />
     <Compile Include="Booking.cs" />
+    <Compile Include="BookingsBase.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="CustomersBase.cs" />
     <Compile Include="Flight.cs" />

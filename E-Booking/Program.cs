@@ -7,14 +7,15 @@ namespace E_Booking
 	{
 		static void Main(string[] args)
 		{
+			Console.WriteLine(" < E-Bookong, Artem Poshukailo, IS-82, V-8 > ");
 
-			Console.WriteLine(" < E-Bookong, Artem Poshukailo, IS-82, V-2 > ");
-
+			var CustBase = CustomersBase.GetSource();
 			var Manager = FlightsManager.GetSource();
 
 			Program.LogIn();
 
-			Serializer.Serialize<FlightsBase>(Manager.FlightsBase, "FlightsBase.dat");
+			Serializer.Serialize<FlightsBase>(Manager.Flights, "FlightsBase.dat");
+			Serializer.Serialize<CustomersBase>(CustBase, "CustomersBase.dat");
 
 			WriteColorLine(" < Process comletion > ", ConsoleColor.Magenta);
 			Console.WriteLine(" < Enter any key > \n>");
@@ -28,15 +29,16 @@ namespace E_Booking
 			Console.Write(" < Enter \""); WriteColor("o", ConsoleColor.DarkCyan); Console.WriteLine("\" to output menu > ");
 			Console.Write(" < Enter \""); WriteColor("r", ConsoleColor.DarkCyan); Console.WriteLine("\" to register > ");
 			Console.Write(" < Enter \""); WriteColor("m", ConsoleColor.DarkCyan); Console.WriteLine("\" to log in as manager > ");
+			Console.Write(" < Enter \""); WriteColor("c", ConsoleColor.DarkCyan); Console.WriteLine("\" to log in as customer > ");
 			Console.Write(" < Enter \""); WriteColor("q", ConsoleColor.DarkCyan); Console.WriteLine("\" to quit > ");
 			Console.WriteLine();
 		}
 
-
 		public static void LogIn()
 		{
 			FlightsManager Manager = FlightsManager.GetSource();
-			//Customer CurCust = null;
+			CustomersBase CustBase = CustomersBase.GetSource();
+			Customer CurCust = null;
 			char mode = ' ';
 			MainMenu();
 
@@ -53,8 +55,9 @@ namespace E_Booking
 
 					case 'r':
 					case 'R':
-						Manager.CustomersBase.RegistrateCustomer();
-						Console.WriteLine(" < Your account has been successfuly created > \n");
+
+						Manager.Customers.RegistrateCustomer();
+						Program.WriteColorLine(" < Your account has been successfuly created > \n", ConsoleColor.Green);
 						break;
 
 					case 'm':
@@ -68,10 +71,23 @@ namespace E_Booking
 
 						break;
 
+					case 'c':
+					case 'C':
+
+						CurCust = CustBase.FindByLogin();
+						if (CurCust != null )
+						{
+							if (CurCust.EnterPassword())
+							{
+								CurCust.CustomersMenu();
+								MainMenu();
+							}
+						}
+						break;
+
 					case 'q':
 					case 'Q':
 						break;
-
 
 					default:
 						WriteColorLine(" < Wrong mode > ", ConsoleColor.Red);
@@ -144,4 +160,20 @@ namespace E_Booking
 		}
 	}
 
+	delegate bool CheckLogin(string CurLogin);
+
+	enum FlightsTime { departure, arrival }
+
+	[Serializable]
+	struct Baggage
+	{
+		public bool HandLuggage;
+		public bool Suitcase;
+		public Baggage(bool handLuggage, bool suitcase)
+		{
+			HandLuggage = handLuggage;
+			Suitcase = suitcase;
+		}
+
+	}
 }

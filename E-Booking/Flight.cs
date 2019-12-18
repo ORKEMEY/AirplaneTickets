@@ -5,17 +5,15 @@ namespace E_Booking
 {
 	[Serializable]
 	class Flight
-    {
+	{
 		private string _Origin;
 		private string _Destination;
 		private DateTime _Departure;
 		private DateTime _Arrival;
-
-		public int IDFlight;
-
 		private int _NumberOfSeats;
 
-		public List<Booking> Tickets;
+		public int IDFlight;
+		public BookingsBase Tickets;
 
 		public int NumberOfSeats
 		{
@@ -25,7 +23,7 @@ namespace E_Booking
 			}
 			set
 			{
-				if(value <= 0)
+				if (value <= 0)
 				{
 					Program.WriteColorLine(" < Number of seats in aeroplane cann't be less than null or be equal > ", ConsoleColor.Red);
 					_NumberOfSeats = -1;
@@ -97,7 +95,7 @@ namespace E_Booking
 			}
 			set
 			{
-				if(DateTime.Compare(value, DateTime.Now) <= 0)
+				if (DateTime.Compare(value, DateTime.Now) <= 0)
 				{
 					Program.WriteColorLine(" < This time cann't be set earlier than now > ", ConsoleColor.Red);
 					_Arrival = DateTime.MinValue;
@@ -137,7 +135,25 @@ namespace E_Booking
 			IDFlight = _NumberOfSeats = -1;
 			_Origin = _Destination = null;
 			_Departure = _Arrival = DateTime.MinValue;
-			Tickets = new List<Booking>();
+			Tickets = new BookingsBase();
+		}
+
+		public DateTime this[FlightsTime Time]
+		{
+			get
+			{
+				switch (Time)
+				{
+					case FlightsTime.arrival:
+						return Arrival;
+
+					case FlightsTime.departure:
+						return Departure;
+
+					default: return DateTime.MinValue;
+				}
+
+			}
 		}
 
 		public void Registration()
@@ -168,7 +184,7 @@ namespace E_Booking
 				{
 					NumberOfSeats = Convert.ToInt32(Console.ReadLine());
 				}
-				catch(FormatException)
+				catch (FormatException)
 				{
 					Program.WriteColorLine(" < Wrong format, number of seats is a number > ", ConsoleColor.Red);
 				}
@@ -183,19 +199,19 @@ namespace E_Booking
 
 		public static void SetTime(out (DateTime departure, DateTime arrival) Time)
 		{
-			
+
 			do
 			{
 				do
 				{
-					Console.Write(" < Enter departure time of flight like \"dd.mm.yyyy hh:mm\" > \n>");
+					Console.Write($" < Enter departure time of flight like \"dd.mm.yyyy hh:mm\" > \n>");
 					Time.departure = EnterDateTime();
 
 				} while (Time.departure == DateTime.MinValue);
 
 				do
 				{
-					Console.Write(" < Enter arrival time of flight like \"dd.mm.yyyy hh:mm\" > \n>");
+					Console.Write($" < Enter arrival time of flight like \"dd.mm.yyyy hh:mm\" > \n>");
 					Time.arrival = EnterDateTime();
 
 				} while (Time.arrival == DateTime.MinValue);
@@ -208,9 +224,9 @@ namespace E_Booking
 		{
 			if (DateTime.Compare(Departure, Arrival) > 0)
 			{
-				Program.WriteColorLine( " < Arrival cann't be earlier than departure > " , ConsoleColor.Red);
+				Program.WriteColorLine(" < Arrival cann't be earlier than departure > ", ConsoleColor.Red);
 				return false;
-			}else if (DateTime.Compare(Departure, Arrival) == 0)
+			} else if (DateTime.Compare(Departure, Arrival) == 0)
 			{
 				Program.WriteColorLine(" Departure and arrival cann't be at the same time > ", ConsoleColor.Red);
 				return false;
